@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>The Supreme Creature — A Story-Driven Guide to Git</title>
+<script>document.documentElement.classList.add('js');</script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #1a1625;
+    --bg-elevated: #241e30;
+    --surface: #2a2438;
+    --surface-border: #3a3148;
+    --text: #f4ede0;
+    --text-muted: #c8b8d9;
+    --text-subtle: #9b8aae;
+    --mint: #86efac;
+    --peach: #fdba74;
+    --lavender: #c4b5fd;
+    --coral: #fb7185;
+    --honey: #fcd34d;
+    --sky: #7dd3fc;
+    --rose: #f0abfc;
+    --code-bg: #2a2438;
+    --code-text: #f4ede0;
+  }
+
+  html {
+    scroll-snap-type: y mandatory;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: Nunito, "Avenir Next", system-ui, sans-serif;
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(ellipse 80% 60% at 12% 8%, var(--bg-elevated) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 40% at 88% 92%, rgba(134, 239, 172, 0.04) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 35% at 75% 15%, rgba(240, 171, 252, 0.03) 0%, transparent 60%);
+    background-attachment: fixed;
+    color: var(--text);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .slide {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8vh 12vw;
+    position: relative;
+  }
+
+  .slide.title {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .slide.closing {
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .slide.title h1 {
+    font-family: ui-rounded, "SF Pro Rounded", "Hiragino Maru Gothic ProN", "Quicksand", Nunito, system-ui, sans-serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    background: linear-gradient(100deg, var(--peach) 0%, var(--honey) 25%, var(--coral) 50%, var(--rose) 75%, var(--lavender) 100%);
+    background-size: 220% 220%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: shimmer 8s ease-in-out infinite;
+    will-change: background-position;
+  }
+
+  .slide.title p,
+  .slide.title .subtitle {
+    font-size: clamp(1.1rem, 2vw, 1.6rem);
+    color: var(--text-muted);
+    margin-top: 1.25rem;
+  }
+
+  .nav-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 2.75rem;
+    font-family: ui-rounded, "SF Pro Rounded", "Hiragino Maru Gothic ProN", "Quicksand", Nunito, system-ui, sans-serif;
+    font-size: 0.85rem;
+    color: var(--text-subtle);
+    letter-spacing: 0.04em;
+    animation: fade-in-soft 0.9s 1.4s cubic-bezier(.2, .6, .2, 1) both;
+  }
+
+  .nav-hint kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.9rem;
+    height: 1.9rem;
+    padding: 0 0.5rem;
+    background: var(--surface);
+    border: 1px solid var(--surface-border);
+    border-bottom-width: 2px;
+    border-radius: 7px;
+    font-family: ui-rounded, "SF Pro Rounded", "Hiragino Maru Gothic ProN", "Quicksand", Nunito, system-ui, sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+  }
+
+  .nav-hint .nav-hint-label {
+    margin-left: 0.35rem;
+  }
+
+  @keyframes fade-in-soft {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 0.9; transform: translateY(0); }
+  }
+
+  .slide.closing h2 {
+    font-family: ui-rounded, "SF Pro Rounded", "Hiragino Maru Gothic ProN", "Quicksand", Nunito, system-ui, sans-serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    letter-spacing: -0.015em;
+    background: linear-gradient(135deg, var(--peach), var(--rose), var(--lavender));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .slide.closing p {
+    max-width: 60ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  h2 {
+    font-family: ui-rounded, "SF Pro Rounded", "Hiragino Maru Gothic ProN", "Quicksand", Nunito, system-ui, sans-serif;
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+  }
+
+  p {
+    font-size: clamp(1rem, 1.8vw, 1.3rem);
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    max-width: 62ch;
+  }
+
+  ul, ol {
+    font-size: clamp(1rem, 1.8vw, 1.3rem);
+    color: var(--text-muted);
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+    max-width: 62ch;
+  }
+
+  li {
+    margin-bottom: 0.6rem;
+    padding-left: 0.25rem;
+  }
+
+  li::marker {
+    color: var(--mint);
+  }
+
+  code {
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", Menlo, Consolas, monospace;
+    background: var(--surface);
+    padding: 0.15em 0.45em;
+    border-radius: 6px;
+    font-size: 0.9em;
+    color: var(--honey);
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--surface-border);
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+    max-width: min(86ch, 100%);
+    box-shadow: 0 0 0 1px var(--surface-border), 0 8px 24px -16px rgba(0, 0, 0, 0.6);
+  }
+
+  pre::-webkit-scrollbar { height: 8px; }
+  pre::-webkit-scrollbar-thumb { background: var(--surface-border); border-radius: 4px; }
+  pre::-webkit-scrollbar-track { background: transparent; }
+
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: clamp(0.85rem, 1.4vw, 1.05rem);
+    line-height: 1.6;
+    color: var(--code-text);
+  }
+
+  strong { color: var(--honey); font-weight: 700; }
+  em { color: var(--rose); font-style: italic; }
+
+  .slide-number {
+    position: absolute;
+    bottom: 2rem;
+    right: 3rem;
+    font-family: ui-rounded, "SF Pro Rounded", "Hiragino Maru Gothic ProN", "Quicksand", Nunito, system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-subtle);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ===== Illustrations ===== */
+
+  .illust {
+    display: block;
+    pointer-events: none;
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  .illust[class*="illust-icon-"] {
+    position: absolute;
+    top: 2.5rem;
+    right: 2.75rem;
+    width: 90px;
+    height: 90px;
+    opacity: 0.97;
+    transition: transform 0.4s ease;
+    z-index: 1;
+  }
+
+  .illust-hero-supreme,
+  .illust-hero-cycle {
+    display: block;
+    width: 230px;
+    height: 230px;
+    margin: 0 auto 1.5rem;
+  }
+
+  /* ===== Motion ===== */
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(252, 211, 77, 0)); }
+    50% { transform: scale(1.04); filter: drop-shadow(0 0 8px var(--honey)); }
+  }
+
+  @keyframes sway {
+    0%, 100% { transform: rotate(-2deg); }
+    50% { transform: rotate(2deg); }
+  }
+
+  @keyframes shimmer {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  @keyframes fade-up {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .illust-icon-creature,
+  .illust-icon-clones,
+  .illust-icon-many-clones,
+  .illust-icon-solo,
+  .illust-icon-team,
+  .illust-icon-share,
+  .illust-hero-supreme,
+  .illust-hero-cycle {
+    animation: bob 3s ease-in-out infinite;
+    transform-origin: center;
+    will-change: transform;
+  }
+
+  .illust-icon-share { animation-delay: -0.3s; }
+
+  .illust-icon-fruit,
+  .illust-icon-cheatsheet {
+    animation: pulse-glow 2.5s ease-in-out infinite;
+    transform-origin: center;
+    will-change: transform, filter;
+  }
+
+  .illust-icon-conflict {
+    animation: sway 4s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  .illust-icon-rotten {
+    animation: sway 5.5s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  .illust-icon-clones { animation-delay: -0.6s; }
+  .illust-icon-many-clones { animation-delay: -1.2s; }
+  .illust-icon-team { animation-delay: -0.9s; }
+  .illust-hero-cycle { animation-delay: -1.5s; }
+
+  .js .slide h2,
+  .js .slide p,
+  .js .slide ul,
+  .js .slide ol,
+  .js .slide pre {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .in-view h2,
+  .in-view p,
+  .in-view ul,
+  .in-view ol,
+  .in-view pre {
+    animation: fade-up 0.7s cubic-bezier(.2, .6, .2, 1) forwards;
+  }
+
+  .in-view h2 { animation-delay: 0.05s; }
+  .in-view p:nth-of-type(1) { animation-delay: 0.15s; }
+  .in-view p:nth-of-type(2) { animation-delay: 0.25s; }
+  .in-view ul, .in-view ol { animation-delay: 0.30s; }
+  .in-view pre { animation-delay: 0.40s; }
+
+  /* ===== Wide screens — center content in a capped column ===== */
+
+  @media (min-width: 1400px) {
+    .slide {
+      padding-left: max(12vw, calc((100vw - 1200px) / 2));
+      padding-right: max(12vw, calc((100vw - 1200px) / 2));
+    }
+
+    /* Anchor icon's right edge to the content's right edge so it
+       sits inside the capped column instead of floating in the gutter. */
+    .illust[class*="illust-icon-"] {
+      right: max(12vw, calc((100vw - 1200px) / 2));
+    }
+
+    .slide-number {
+      right: max(12vw, calc((100vw - 1200px) / 2));
+    }
+
+    /* Reserve room on the right of the heading so long titles don't
+       run under the icon now that it lives inside the content area. */
+    .slide:not(.title):not(.closing) h2 {
+      padding-right: 110px;
+    }
+  }
+
+  /* ===== Mobile / tablet ===== */
+
+  @media (max-width: 768px) {
+    .slide {
+      padding: 5vh 6vw 7vh;
+      justify-content: flex-start;
+      padding-top: 6vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .slide.title,
+    .slide.closing {
+      justify-content: center;
+      padding-top: 5vh;
+    }
+
+    .slide-number {
+      bottom: 1.25rem;
+      right: 1.25rem;
+    }
+
+    .slide.title h1 {
+      font-size: clamp(2.2rem, 10vw, 3.4rem);
+    }
+
+    .slide.title p,
+    .slide.title .subtitle {
+      font-size: clamp(1rem, 4.5vw, 1.3rem);
+    }
+
+    h2 {
+      font-size: clamp(1.5rem, 6.5vw, 2.1rem);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    p {
+      font-size: clamp(0.95rem, 4vw, 1.1rem);
+      max-width: none;
+      margin-bottom: 0.8rem;
+    }
+
+    ul, ol {
+      font-size: clamp(0.95rem, 4vw, 1.1rem);
+      max-width: none;
+      margin-left: 1.25rem;
+    }
+
+    li { margin-bottom: 0.5rem; }
+
+    pre {
+      padding: 0.85rem 1rem;
+      max-width: 100%;
+      margin-left: -2vw;
+      margin-right: -2vw;
+      border-radius: 8px;
+    }
+
+    pre code {
+      font-size: clamp(0.72rem, 3.2vw, 0.92rem);
+      line-height: 1.5;
+    }
+
+    code { word-break: break-word; }
+
+    .slide.closing h2 {
+      font-size: clamp(1.8rem, 8vw, 2.6rem);
+    }
+
+    .illust[class*="illust-icon-"] {
+      position: static;
+      width: 70px;
+      height: 70px;
+      margin: 0 0 0.75rem;
+      opacity: 1;
+    }
+
+    .illust-hero-supreme,
+    .illust-hero-cycle {
+      width: 170px;
+      height: 170px;
+    }
+
+    .nav-hint { display: none; }
+  }
+
+  @media (max-width: 480px) {
+    .slide { padding: 6vh 4vw 7vh; }
+    pre { padding: 0.7rem 0.85rem; margin-left: -1vw; margin-right: -1vw; }
+    pre code { font-size: clamp(0.68rem, 3vw, 0.85rem); }
+    ul, ol { margin-left: 1rem; }
+    .illust[class*="illust-icon-"] { width: 60px; height: 60px; }
+    .illust-hero-supreme, .illust-hero-cycle { width: 140px; height: 140px; }
+  }
+
+  @media (max-height: 480px) and (orientation: landscape) {
+    .slide { padding: 4vh 8vw; justify-content: flex-start; padding-top: 5vh; overflow-y: auto; }
+    h2 { font-size: clamp(1.3rem, 4.5vh, 1.8rem); margin-bottom: 0.5rem; }
+    p, ul, ol { font-size: clamp(0.85rem, 3vh, 1rem); margin-bottom: 0.5rem; }
+    pre code { font-size: clamp(0.7rem, 2.4vh, 0.85rem); }
+    .slide-number { bottom: 0.5rem; right: 1rem; }
+    .illust-hero-supreme, .illust-hero-cycle { width: 110px; height: 110px; margin-bottom: 0.5rem; }
+  }
+
+  /* ===== Reduced motion ===== */
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    .js .slide h2,
+    .js .slide p,
+    .js .slide ul,
+    .js .slide ol,
+    .js .slide pre {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="slide title">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="illust illust-hero-supreme" aria-hidden="true">
+  <g fill="#fcd34d">
+    <circle cx="30" cy="40" r="2.5"/>
+    <circle cx="170" cy="55" r="3"/>
+    <circle cx="25" cy="120" r="2"/>
+    <circle cx="180" cy="135" r="2.5"/>
+    <circle cx="160" cy="25" r="1.8"/>
+    <circle cx="45" cy="170" r="2"/>
+    <path d="M155 90 L157 96 L163 98 L157 100 L155 106 L153 100 L147 98 L153 96 Z"/>
+    <path d="M40 75 L41.5 79 L45.5 80.5 L41.5 82 L40 86 L38.5 82 L34.5 80.5 L38.5 79 Z"/>
+    <path d="M175 165 L176.5 169 L180.5 170.5 L176.5 172 L175 176 L173.5 172 L169.5 170.5 L173.5 169 Z"/>
+  </g>
+  <g transform="translate(100 50)">
+    <ellipse cx="0" cy="20" rx="3" ry="5" fill="#fb7185" opacity="0.35"/>
+    <circle cx="0" cy="0" r="18" fill="#fdba74"/>
+    <ellipse cx="-5" cy="-5" rx="5" ry="3" fill="#fed7aa" opacity="0.7"/>
+    <path d="M0 -18 Q-2 -23 -1 -25" stroke="#4a3220" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <path d="M-1 -24 Q6 -28 10 -22 Q4 -20 -1 -22 Z" fill="#86efac"/>
+  </g>
+  <ellipse cx="100" cy="172" rx="42" ry="6" fill="#000" opacity="0.18"/>
+  <path d="M100 90 C60 90 50 130 55 155 C58 170 75 175 100 175 C125 175 142 170 145 155 C150 130 140 90 100 90 Z" fill="#86efac"/>
+  <path d="M100 90 C70 90 55 125 58 150 C60 162 70 168 85 170 C70 165 65 150 68 130 C72 110 85 95 100 90 Z" fill="#a7f3c5" opacity="0.6"/>
+  <ellipse cx="82" cy="115" rx="10" ry="14" fill="#d1fadf" opacity="0.55"/>
+  <circle cx="78" cy="142" r="6" fill="#f0abfc" opacity="0.55"/>
+  <circle cx="125" cy="142" r="6" fill="#f0abfc" opacity="0.55"/>
+  <ellipse cx="88" cy="130" rx="4.5" ry="6" fill="#1a1625"/>
+  <ellipse cx="115" cy="130" rx="4.5" ry="6" fill="#1a1625"/>
+  <circle cx="89.5" cy="128" r="1.6" fill="#f4ede0"/>
+  <circle cx="116.5" cy="128" r="1.6" fill="#f4ede0"/>
+  <path d="M94 148 Q101 156 109 148" stroke="#1a1625" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+  <path d="M70 110 Q60 95 72 80" stroke="#86efac" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <path d="M130 110 Q140 95 128 80" stroke="#86efac" stroke-width="7" stroke-linecap="round" fill="none"/>
+</svg>
+<h1>The Supreme Creature</h1>
+<p class="subtitle">A Story-Driven Guide to Git</p>
+<div class="nav-hint" aria-label="Use the left and right arrow keys to navigate slides">
+  <kbd>←</kbd><kbd>→</kbd><span class="nav-hint-label">to navigate</span>
+</div>
+<div class="slide-number">1 / 16</div>
+</div>
+
+<div class="slide">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" class="illust illust-icon-creature" aria-hidden="true">
+  <ellipse cx="40" cy="68" rx="22" ry="3" fill="#000" opacity="0.18"/>
+  <path d="M40 24 C22 24 17 44 19 58 C21 67 30 70 40 70 C50 70 59 67 61 58 C63 44 58 24 40 24 Z" fill="#86efac"/>
+  <path d="M40 24 C26 24 19 42 21 56 C22 63 27 67 34 69 C26 66 24 57 25 47 C27 35 33 27 40 24 Z" fill="#a7f3c5" opacity="0.6"/>
+  <ellipse cx="32" cy="40" rx="5" ry="6" fill="#d1fadf" opacity="0.55"/>
+  <circle cx="30" cy="56" r="3" fill="#f0abfc" opacity="0.55"/>
+  <circle cx="50" cy="56" r="3" fill="#f0abfc" opacity="0.55"/>
+  <ellipse cx="33" cy="50" rx="2.4" ry="3" fill="#1a1625"/>
+  <ellipse cx="47" cy="50" rx="2.4" ry="3" fill="#1a1625"/>
+  <circle cx="33.6" cy="49" r="0.8" fill="#f4ede0"/>
+  <circle cx="47.6" cy="49" r="0.8" fill="#f4ede0"/>
+  <path d="M36 60 Q40 64 44 60" stroke="#1a1625" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+</svg>
+<h2>Meet the Creature</h2>
+<p>Deep inside a quiet laboratory, a creature was born. It is unlike anything else on Earth: it can clone itself, endlessly and perfectly, on demand. There is only one <strong>supreme</strong> version of it — the original, the source of truth from which every copy descends.</p>
+<p>Its purpose is simple. It grows <strong>fruit</strong> for humans. Fruit nourishes, delights, and sometimes heals — though every now and then, a piece carries an unexpected side effect.</p>
+<p><em>The scientists' job is to coax better fruit from the creature, one careful experiment at a time.</em></p>
+<div class="slide-number">2 / 16</div>
+</div>
+
+<div class="slide">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" class="illust illust-icon-lab" aria-hidden="true">
+  <rect x="33" y="12" width="14" height="14" rx="2" fill="#2a2438" stroke="#f4ede0" stroke-width="1.6"/>
+  <path d="M30 26 L50 26 L62 60 Q64 70 54 70 L26 70 Q16 70 18 60 Z" fill="#2a2438" stroke="#f4ede0" stroke-width="1.6"/>
+  <path d="M22 48 L58 48 L62 60 Q64 70 54 70 L26 70 Q16 70 18 60 Z" fill="#7dd3fc" opacity="0.7"/>
+  <ellipse cx="28" cy="52" rx="4" ry="1.5" fill="#f4ede0" opacity="0.4"/>
+  <g transform="translate(40 58)">
+    <path d="M0 -8 C-9 -8 -11 0 -10 6 C-9 10 -5 12 0 12 C5 12 9 10 10 6 C11 0 9 -8 0 -8 Z" fill="#86efac"/>
+    <ellipse cx="-3" cy="2" rx="1.4" ry="1.8" fill="#1a1625"/>
+    <ellipse cx="3" cy="2" rx="1.4" ry="1.8" fill="#1a1625"/>
+    <path d="M-2 6 Q0 8 2 6" stroke="#1a1625" stroke-width="1" stroke-linecap="round" fill="none"/>
+  </g>
+  <circle cx="48" cy="42" r="2" fill="#f4ede0" opacity="0.5"/>
+  <circle cx="30" cy="38" r="1.4" fill="#f4ede0" opacity="0.5"/>
+</svg>
+<h2>The Lab = Your Repository</h2>
+<p>The lab is where the creature lives. Its walls hold every record, every fruit ever picked, every experiment ever logged. In Git, the lab is your <strong>repository</strong>.</p>
+<p>You can build a brand new lab from scratch, or you can carry an existing one home with you to work on it.</p>
+<pre><code>git init                    # build a new lab
+git clone &lt;url&gt;             # take an existing lab home</code></pre>
+<p>Either way, you now have a place where the creature — and its history — can live.</p>
+<div class="slide-number">3 / 16</div>
+</div>
+
+<div class="slide">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" class="illust illust-icon-clones" aria-hidden="true">
+  <g opacity="0.35" transform="translate(-14 -4)">
+    <path d="M40 30 C26 30 22 46 24 58 C25 65 31 68 40 68 C49 68 55 65 56 58 C58 46 54 30 40 30 Z" fill="#86efac"/>
+    <ellipse cx="35" cy="50" rx="1.6" ry="2" fill="#1a1625"/>
+    <ellipse cx="45" cy="50" rx="1.6" ry="2" fill="#1a1625"/>
+  </g>
+  <g opacity="0.6" transform="translate(10 -2)">
+    <path d="M40 30 C26 30 22 46 24 58 C25 65 31 68 40 68 C49 68 55 65 56 58 C58 46 54 30 40 30 Z" fill="#86efac"/>
+    <ellipse cx="35" cy="50" rx="1.8" ry="2.2" fill="#1a1625"/>
+    <ellipse cx="45" cy="50" rx="1.8" ry="2.2" fill="#1a1625"/>
+  </g>
+  <g>
+    <path d="M40 26 C23 26 18 44 20 58 C22 67 30 70 40 70 C50 70 58 67 60 58 C62 44 57 26 40 26 Z" fill="#86efac"/>
+    <path d="M40 26 C26 26 20 42 22 56 C23 63 28 67 34 69 C26 66 24 57 26 47 C28 35 33 28 40 26 Z" fill="#a7f3c5" opacity="0.6"/>
+    <circle cx="31" cy="56" r="2.5" fill="#f0abfc" opacity="0.55"/>
+    <circle cx="49" cy="56" r="2.5" fill="#f0abfc" opacity="0.55"/>
+    <ellipse cx="33" cy="50" rx="2.2" ry="2.8" fill="#1a1625"/>
+    <ellipse cx="47" cy="50" rx="2.2" ry="2.8" fill="#1a1625"/>
+    <path d="M36 60 Q40 63 44 60" stroke="#1a1625" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  </g>
+</svg>
+<h2>Cloning the Creature = Branches</h2>
+<p>No sane scientist pokes the supreme creature directly. If something goes wrong, the source of truth is ruined. Instead, they spin up a <strong>clone</strong> — an identical copy they can safely experiment on.</p>
+<p>In Git, a clone of the creature is called a <em>branch</em>.</p>
+<pre><code>git branch feature-x        # create a clone named feature-x
+git checkout -b feature-x   # create it AND step into the lab room with it</code></pre>
+<p>Whatever happens to <code>feature-x</code> stays with <code>feature-x</code> — until the scientist decides it's ready.</p>
+<div class="slide-number">4 / 16</div>
+</div>
+
+<div class="slide">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" class="illust illust-icon-fruit" aria-hidden="true">
+  <ellipse cx="40" cy="68" rx="18" ry="3" fill="#000" opacity="0.18"/>
+  <circle cx="40" cy="46" r="22" fill="#fdba74"/>
+  <path d="M40 26 Q36 46 40 66" stroke="#fb923c" stroke-width="1.2" opacity="0.4" fill="none"/>
+  <ellipse cx="32" cy="38" rx="6" ry="4" fill="#fed7aa" opacity="0.7"/>
+  <path d="M40 24 Q38 18 40 14" stroke="#4a3220" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+  <path d="M40 18 Q50 12 56 20 Q48 22 40 20 Z" fill="#86efac"/>
+  <path d="M42 19 Q48 18 54 20" stroke="#65d895" stroke-width="0.8" fill="none" opacity="0.7"/>
+  <circle cx="58" cy="42" r="1.5" fill="#fcd34d"/>
+</svg>
+<h2>The Fruit = Commits</h2>
+<p>Every clone produces fruit. Each piece is a <strong>commit</strong> — a single, recorded change to the creature. Some fruit is sweet: a clean new feature, a long-awaited fix. Some fruit has <em>side effects</em>: the bugs nobody asked for.</p>
+<p>Picking fruit is a two-step ritual. First the scientist places it on the tray for inspection, then writes it into the lab log.</p>
+<pre><code>git add fruit.txt           # place the fruit on the tray
+git commit -m "Grow sweeter fruit"  # record it in the lab log</code></pre>
+<div class="slide-number">5 / 16</div>
+</div>
+
+<div class="slide">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" class="illust illust-icon-many-clones" aria-hidden="true">
+  <g transform="translate(16 42)">
+    <ellipse cx="0" cy="22" rx="12" ry="2" fill="#000" opacity="0.18"/>
+    <path d="M0 0 C-10 0 -13 12 -11 20 C-10 25 -5 26 0 26 C5 26 10 25 11 20 C13 12 10 0 0 0 Z" fill="#86efac"/>
+    <ellipse cx="-3" cy="12" rx="1.4" ry="1.8" fill="#1a1625"/>
+    <ellipse cx="3" cy="12" rx="1.4" ry="1.8" fill="#1a1625"/>
+    <path d="M-2 17 Q0 19 2 17" stroke="#1a1625" stroke-width="1" stroke-linecap="round" fill="none"/>
+    <circle cx="0" cy="-8" r="5" fill="#fdba74"/>
+    <path d="M0 -13 Q2 -16 4 -14 Q2 -13 0 -13 Z" fill="#86efac"/>
+  </g>
+  <g transform="translate(40 38)">
+    <ellipse cx="0" cy="26" rx="13" ry="2" fill="#000" opacity="0.18"/>
+    <path d="M0 0 C-11 0 -14 14 -12 22 C-11 28 -6 30 0 30 C6 30 11 28 12 22 C14 14 11 0 0 0 Z" fill="#c4b5fd"/>
+    <ellipse cx="-3.5" cy="13" rx="1.5" ry="2" fill="#1a1625"/>
+    <ellipse cx="3.5" cy="13" rx="1.5" ry="2" fill="#1a1625"/>
+    <path d="M-2.5 19 Q0 21 2.5 19" stroke="#1a1625" stroke-width="1" stroke-linecap="round" fill="none"/>
+    <circle cx="0" cy="-10" r="5.5" fill="#f0abfc"/>
+    <path d="M0 -15 Q2 -18 4 -16 Q2 -15 0 -15 Z" fill="#86efac"/>
+  </g>
+  <g transform="translate(64 42)">
+    <ellipse cx="0" cy="22" rx="12" ry="2" fill="#000" opacity="0.18"/>
+    <path d="M0 0 C-10 0 -13 12 -11 20 C-10 25 -5 26 0 26 C5 26 10 25 11 20 C13 12 10 0 0 0 Z" fill="#7dd3fc"/>
+    <ellipse cx="-3" cy="12" rx="1.4" ry="1.8" fill="#1a1625"/>
+    <ellipse cx="3" cy="12" rx="1.4" ry="1.8" fill="#1a1625"/>
+    <path d="M-2 17 Q0 19 2 17" stroke="#1a1625" stroke-width="1" stroke-linecap="round" fill="none"/>
+    <circle cx="0" cy="-8" r="5" fill="#fcd34d"/>
+    <path d="M0 -13 Q2 -16 4 -14 Q2 -13 0 -13 Z" fill="#86efac"/>
+  </g>
+</svg>
+<h2>Many Scientists, Many Clones</h2>
+<p>The lab is busy. One scientist is breeding a clone for sweeter fruit, another is hunting down a side effect, a third is trying something wild. None of them disturb the supreme creature, and none of them disturb each other.</p>
+<ul>
+<li><strong>Isolation</strong> — experiments can fail without harming the source of truth.</li>
+<li><strong>Parallelism</strong> — many scientists work on many clones at once.</li>
+<li><strong>Focus</strong> — each clone has a single, clear purpose.</li>
+<li><strong>Reversibility</strong> — a bad clone can simply be discarded.</li>
+</ul>
+<div class="slide-number">6 / 16</div>
+</div>
+
+<div class="slide">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" class="illust illust-icon-solo" aria-hidden="true">
+  <ellipse cx="38" cy="70" rx="22" ry="3" fill="#000" opacity="0.18"/>
+  <path d="M34 24 C18 24 14 42 16 56 C18 65 26 70 36 70 C46 70 53 65 55 56 C57 42 50 24 34 24 Z" fill="#86efac"/>
+  <path d="M34 24 C22 24 16 40 18 54 C19 61 24 65 30 67 C22 64 20 55 22 45 C24 33 28 26 34 24 Z" fill="#a7f3c5" opacity="0.6"/>
+  <circle cx="26" cy="54" r="2.5" fill="#f0abfc" opacity="0.55"/>
+  <circle cx="42" cy="54" r="2.5" fill="#f0abfc" opacity="0.55"/>
+  <ellipse cx="28" cy="48" rx="2" ry="2.6" fill="#1a1625"/>
+  <ellipse cx="40" cy="48" rx="2" ry="2.6" fill="#1a1625"/>
+  <path d="M31 58 Q34 61 37 58" stroke="#1a1625" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  <path d="M52 58 Q60 56 62 50" stroke="#86efac" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <g transform="translate(58 42) rotate(15)">
+    <rect x="0" y="0" width="16" height="20" rx="2" fill="#f4ede0"/>
+    <rect x="0" y="0" width="16" height="20" rx="2" fill="none" stroke="#fdba74" stroke-width="1.2"/>
+    <line x1="3" y1="5" x2="13" y2="5" stroke="#c4b5fd" stroke-width="1"/>
+    <line x1="3" y1="9" x2="13" y2="9" stroke="#c4b5fd" stroke-width="1"/>
+    <line x1="3" y1="13" x2="11" y2="13" stroke="#c4b5fd" stroke-width="1"/>
+  </g>
+</svg>
+<h2>The Solo Scientist Workflow</h2>
+<p>Even alone in the lab, a scientist keeps a journal of every fruit — so missteps are reversible, experiments are isolated, and progress is never lost to a bad afternoon.</p>
+<pre><code>git init                              # build your lab
+git checkout -b feature/sweet-fruit   # spawn a clone to experiment on
+# ... edit files, run tests ...
+git add .                             # gather the fruit from this clone
+git commit -m "Grow first batch"      # record it in the journal
+git checkout main                     # return to the supreme specimen
+git merge feature/sweet-fruit         # bring the harvest home
+git log --oneline                     # review the journal</code></pre>
+<ul>
+  <li>Undo mistakes safely: a bad mutation is one <code>git checkout</code> away from being forgotten.</li>
+  <li>Try wild ideas without fear: spawn a clone, experiment freely, discard it if the fruit turns sour.</li>
+  <li>Document your progress: every commit is a dated lab note explaining what you grew and why.</li>
+</ul>
+<div class="slide-number">7 / 16</div>
+</div>
+
+<div class="slide">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" class="illust illust-icon-merge" aria-hidden="true">
+  <circle cx="56" cy="48" r="20" fill="#fcd34d" opacity="0.25"/>
+  <g transform="translate(16 30)">
+    <path d="M0 0 C-9 0 -12 12 -10 20 C-9 25 -4 27 0 27 C4 27 9 25 10 20 C12 12 9 0 0 0 Z" fill="#c4b5fd" opacity="0.85"/>
+    <ellipse cx="-2.5" cy="11" rx="1.3" ry="1.7" fill="#1a1625"/>
+    <ellipse cx="2.5" cy="11" rx="1.3" ry="1.7" fill="#1a1625"/>
+    <path d="M-1.5 16 Q0 18 1.5 16" stroke="#1a1625" stroke-width="1" stroke-linecap="round" fill="none"/>
+  </g>
+  <path d="M28 44 Q36 48 44 46" stroke="#fcd34d" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.7"/>
+  <g transform="translate(56 22)">
+    <ellipse cx="0" cy="38" rx="16" ry="2" fill="#000" opacity="0.18"/>
+    <path d="M0 0 C-14 0 -17 18 -15 30 C-13 38 -6 40 0 40 C6 40 13 38 15 30 C17 18 14 0 0 0 Z" fill="#86efac"/>
+    <path d="M0 0 C-10 0 -16 14 -14 28 C-13 34 -10 38 -6 39 C-12 36 -14 28 -12 20 C-10 10 -6 2 0 0 Z" fill="#a7f3c5" opacity="0.6"/>
+    <circle cx="-4" cy="22" r="2.5" fill="#f0abfc" opacity="0.55"/>
+    <circle cx="4" cy="22" r="2.5" fill="#f0abfc" opacity="0.55"/>
+    <ellipse cx="-3" cy="17" rx="1.8" ry="2.4" fill="#1a1625"/>
+    <ellipse cx="3" cy="17" rx="1.8" ry="2.4" fill="#1a1625"/>
+    <path d="M-2 26 Q0 28 2 26" stroke="#1a1625" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+  </g>
+  <path d="M42 24 Q40 21 38 23 Q36 25 40 28 Q44 25 42 23 Q40 21 38 23" fill="#f0abfc" opacity="0.9"/>
+</svg>
+<h2>The Merge Ritual</h2>
+<p>When a clone's fruit looks promising, the lab council convenes. They inspect each piece — taste, color, side effects — before allowing those improvements to flow back into the supreme creature. Only approved fruit joins the canonical genome.</p>
+<pre><code>git checkout main
+git pull
+git merge feature/sweet-fruit
+git push</code></pre>
+<ul>
+  <li>A <strong>pull request</strong> is a formal petition to graft a clone's fruit onto the supreme creature.</li>
+  <li>Peer scientists review the changes, suggest refinements, and flag risky mutations.</li>
+  <li>Nothing reaches the supreme creature until the council approves the merge.</li>
+</ul>
+<div class="slide-number">8 / 16</div>
+</div>
+
+<div class="slide">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" class="illust illust-icon-conflict" aria-hidden="true">
+  <g transform="translate(22 46)">
+    <circle r="14" fill="#fdba74"/>
+    <ellipse cx="-4" cy="-4" rx="4" ry="2.5" fill="#fed7aa" opacity="0.7"/>
+    <path d="M0 -14 Q-1 -17 0 -19" stroke="#4a3220" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <path d="M0 -18 Q5 -20 7 -16 Q3 -15 0 -17 Z" fill="#86efac"/>
+  </g>
+  <g transform="translate(58 46)">
+    <circle r="14" fill="#fb7185"/>
+    <ellipse cx="-4" cy="-4" rx="4" ry="2.5" fill="#fda4af" opacity="0.7"/>
+    <path d="M0 -14 Q1 -17 0 -19" stroke="#4a3220" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <path d="M0 -18 Q-5 -20 -7 -16 Q-3 -15 0 -17 Z" fill="#86efac"/>
+  </g>
+  <g transform="translate(40 46)">
+    <path d="M-4 -10 L2 -3 L-3 0 L4 10 L-1 2 L4 -1 Z" fill="#fcd34d"/>
+    <circle cx="-8" cy="-4" r="1.5" fill="#fcd34d"/>
+    <circle cx="8" cy="6" r="1.5" fill="#fcd34d"/>
+    <circle cx="6" cy="-10" r="1.2" fill="#fcd34d"/>
+    <circle cx="-7" cy="9" r="1.2" fill="#fcd34d"/>
+  </g>
+</svg>
+<h2>When Fruits Collide</h2>
+<p>Two scientists tampered with the same gene of the supreme creature. The lab's machinery cannot reconcile the rival edits on its own — a human must step in and decide which trait wins, or how to weave them together.</p>
+<pre><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+flavor = "sweet"
+=======
+flavor = "tart"
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature/tart-fruit</code></pre>
+<ol>
+  <li>Open the file and locate the conflict markers.</li>
+  <li>Choose the correct trait — or combine them into something new.</li>
+  <li>Run <code>git add</code> on the file, then <code>git commit</code> to seal the resolution.</li>
+</ol>
+<div class="slide-number">9 / 16</div>
+</div>
+
+<div class="slide">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" class="illust illust-icon-notebook" aria-hidden="true">
+  <ellipse cx="40" cy="66" rx="26" ry="3" fill="#000" opacity="0.2"/>
+  <path d="M12 22 Q40 16 68 22 L68 60 Q40 54 12 60 Z" fill="#f4ede0"/>
+  <path d="M12 22 Q26 18 40 22 L40 60 Q26 56 12 60 Z" fill="#faf3e0"/>
+  <path d="M40 22 Q54 18 68 22 L68 60 Q54 56 40 60 Z" fill="#fdf6e3"/>
+  <path d="M40 22 L40 60" stroke="#d6cdb8" stroke-width="1.2"/>
+  <g stroke="#c4b5fd" stroke-width="1.5" stroke-linecap="round" fill="none">
+    <path d="M16 30 Q20 28 24 30 T34 30"/>
+    <path d="M16 36 Q20 34 24 36 T34 36"/>
+    <path d="M16 42 Q20 40 24 42 T32 42"/>
+    <path d="M16 48 Q20 46 24 48 T34 48"/>
+    <path d="M44 30 Q48 28 52 30 T62 30"/>
+    <path d="M44 36 Q48 34 52 36 T62 36"/>
+    <path d="M44 42 Q48 40 52 42 T60 42"/>
+  </g>
+  <circle cx="58" cy="50" r="2" fill="#86efac"/>
+</svg>
+<h2>The Lab Notebook</h2>
+<p>Every fruit ever grown is recorded in the lab notebook — who cultivated it, when it ripened, and why. That notebook is <code>git log</code>, the unbroken memory of the experiment.</p>
+<pre><code>git log                       # full history
+git log --oneline             # one line per commit
+git log --graph --all         # see all branches as a tree
+git blame &lt;file&gt;              # who grew this fruit?</code></pre>
+<ul>
+  <li>Trace a side effect back to the exact fruit that introduced it.</li>
+  <li>Understand why past scientists made the decisions they did.</li>
+  <li>Recover work you thought was lost in the chaos of the lab.</li>
+</ul>
+<div class="slide-number">10 / 16</div>
+</div>
+
+<div class="slide">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" class="illust illust-icon-rotten" aria-hidden="true">
+  <g stroke="#fb7185" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.7">
+    <path d="M28 18 Q30 14 32 18 T36 18"/>
+    <path d="M40 12 Q42 8 44 12 T48 12"/>
+    <path d="M52 18 Q54 14 56 18 T60 18"/>
+  </g>
+  <ellipse cx="40" cy="70" rx="20" ry="3" fill="#000" opacity="0.2"/>
+  <path d="M40 30 C22 30 20 50 22 60 Q26 70 40 70 Q54 70 58 60 C60 50 58 30 40 30 Z" fill="#fb7185"/>
+  <ellipse cx="32" cy="52" rx="4" ry="3" fill="#9f1239" opacity="0.45"/>
+  <ellipse cx="50" cy="58" rx="3" ry="2.5" fill="#9f1239" opacity="0.45"/>
+  <ellipse cx="44" cy="44" rx="2.5" ry="2" fill="#9f1239" opacity="0.45"/>
+  <path d="M40 30 Q39 26 40 24" stroke="#4a3220" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+  <path d="M40 26 Q48 28 50 34 Q44 32 40 28 Z" fill="#6b8e6b"/>
+  <g stroke="#1a1625" stroke-width="1.8" stroke-linecap="round">
+    <line x1="31" y1="46" x2="36" y2="51"/>
+    <line x1="36" y1="46" x2="31" y2="51"/>
+    <line x1="44" y1="46" x2="49" y2="51"/>
+    <line x1="49" y1="46" x2="44" y2="51"/>
+  </g>
+  <path d="M36 60 Q40 56 44 60" stroke="#1a1625" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+</svg>
+<h2>Rotten Fruit</h2>
+<p>Sometimes a fruit poisons the whole batch. The lab keeps two antidotes on the shelf — one safe, one dangerous. <strong>Never rewrite history that other scientists have already pulled into their clones.</strong></p>
+<pre><code>git revert &lt;commit&gt;        # safe: grows a new fruit that undoes the bad one
+git reset --hard &lt;commit&gt;  # dangerous: erases fruit from history</code></pre>
+<ul>
+  <li>Prefer <code>git revert</code> on any branch shared with other scientists.</li>
+  <li>Reserve <code>git reset --hard</code> for your own local clone, before anyone has seen the fruit.</li>
+  <li>Rewriting shared history corrupts every clone downstream — the lab will not forgive it.</li>
+</ul>
+<div class="slide-number">11 / 16</div>
+</div>
+
+<div class="slide">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" class="illust illust-icon-team" aria-hidden="true">
+  <circle cx="40" cy="50" r="22" fill="#2a2438"/>
+  <circle cx="40" cy="50" r="22" fill="#7dd3fc" opacity="0.3"/>
+  <path d="M20 46 Q40 42 60 46" stroke="#86efac" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M22 56 Q40 60 58 56" stroke="#c4b5fd" stroke-width="2" fill="none" opacity="0.5"/>
+  <ellipse cx="40" cy="50" rx="32" ry="6" fill="none" stroke="#fcd34d" stroke-width="1.5" opacity="0.55"/>
+  <g transform="translate(40 22)">
+    <path d="M0 0 C-6 0 -8 8 -7 13 C-6 16 -3 17 0 17 C3 17 6 16 7 13 C8 8 6 0 0 0 Z" fill="#86efac"/>
+    <ellipse cx="-1.8" cy="8" rx="0.9" ry="1.2" fill="#1a1625"/>
+    <ellipse cx="1.8" cy="8" rx="0.9" ry="1.2" fill="#1a1625"/>
+    <path d="M-1 11 Q0 12.5 1 11" stroke="#1a1625" stroke-width="0.7" stroke-linecap="round" fill="none"/>
+  </g>
+  <g transform="translate(16 60) rotate(-30)">
+    <path d="M0 0 C-6 0 -8 8 -7 13 C-6 16 -3 17 0 17 C3 17 6 16 7 13 C8 8 6 0 0 0 Z" fill="#c4b5fd"/>
+    <ellipse cx="-1.8" cy="8" rx="0.9" ry="1.2" fill="#1a1625"/>
+    <ellipse cx="1.8" cy="8" rx="0.9" ry="1.2" fill="#1a1625"/>
+    <path d="M-1 11 Q0 12.5 1 11" stroke="#1a1625" stroke-width="0.7" stroke-linecap="round" fill="none"/>
+  </g>
+  <g transform="translate(64 60) rotate(30)">
+    <path d="M0 0 C-6 0 -8 8 -7 13 C-6 16 -3 17 0 17 C3 17 6 16 7 13 C8 8 6 0 0 0 Z" fill="#fdba74"/>
+    <ellipse cx="-1.8" cy="8" rx="0.9" ry="1.2" fill="#1a1625"/>
+    <ellipse cx="1.8" cy="8" rx="0.9" ry="1.2" fill="#1a1625"/>
+    <path d="M-1 11 Q0 12.5 1 11" stroke="#1a1625" stroke-width="0.7" stroke-linecap="round" fill="none"/>
+  </g>
+</svg>
+<h2>The Team Workflow</h2>
+<p>Labs are scattered across the world, each with its own scientists and clones. The central lab — <code>origin</code> — is the shared sanctuary where everyone syncs their findings so no discovery is lost.</p>
+<pre><code>git remote add origin &lt;url&gt;     # link to the central lab
+git fetch origin                # see what's new (don't apply)
+git pull origin main            # see what's new and apply
+git push origin feature-branch  # share your clone</code></pre>
+<ul>
+  <li><strong>Pull before you push</strong> — absorb the central lab's progress before sending your own.</li>
+  <li><strong>Push your branch often</strong> so peers can witness your clone's growth.</li>
+  <li><strong>Never force-push to main</strong> — the supreme creature's lineage must never be rewritten.</li>
+</ul>
+<div class="slide-number">12 / 16</div>
+</div>
+
+<div class="slide">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" class="illust illust-icon-etiquette" aria-hidden="true">
+  <ellipse cx="40" cy="72" rx="22" ry="2.5" fill="#000" opacity="0.2"/>
+  <rect x="16" y="16" width="48" height="56" rx="4" fill="#2a2438"/>
+  <rect x="20" y="22" width="40" height="48" rx="2" fill="#f4ede0"/>
+  <rect x="32" y="10" width="16" height="10" rx="2" fill="#fdba74"/>
+  <rect x="34" y="14" width="12" height="6" rx="1" fill="#fcd9b6"/>
+  <g>
+    <circle cx="28" cy="34" r="3.5" fill="#86efac"/>
+    <path d="M26 34 L27.5 35.5 L30 33" stroke="#1a1625" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <rect x="34" y="33" width="20" height="2" rx="1" fill="#c4b5fd" opacity="0.7"/>
+    <circle cx="28" cy="46" r="3.5" fill="#86efac"/>
+    <path d="M26 46 L27.5 47.5 L30 45" stroke="#1a1625" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <rect x="34" y="45" width="18" height="2" rx="1" fill="#c4b5fd" opacity="0.7"/>
+    <circle cx="28" cy="58" r="3.5" fill="#86efac"/>
+    <path d="M26 58 L27.5 59.5 L30 57" stroke="#1a1625" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <rect x="34" y="57" width="16" height="2" rx="1" fill="#c4b5fd" opacity="0.7"/>
+  </g>
+</svg>
+<h2>Lab Etiquette</h2>
+<p>Good science is good housekeeping. A few rules keep the lab — and the supreme creature — healthy.</p>
+<ul>
+<li><strong>Grow small, focused fruit</strong> — each commit should do one thing, so it can be understood, reviewed, and undone on its own.</li>
+<li><strong>Label your fruit clearly</strong> — write descriptive commit messages in the imperative mood ("Add login flow", not "Added login flow").</li>
+<li><strong>Never experiment on the supreme creature</strong> — don't commit straight to <code>main</code>; spawn a branch and do your work there.</li>
+<li><strong>Sync before you share</strong> — <code>git pull</code> before you <code>git push</code> so your clone isn't stale when others receive it.</li>
+<li><strong>Review every fruit before merging</strong> — open a pull request and let a peer scientist inspect the work before it joins the supreme.</li>
+</ul>
+<div class="slide-number">13 / 16</div>
+</div>
+
+<div class="slide">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" class="illust illust-icon-cheatsheet" aria-hidden="true">
+  <ellipse cx="40" cy="70" rx="26" ry="3" fill="#000" opacity="0.2"/>
+  <path d="M14 22 Q14 14 22 14 L58 14 Q66 14 66 22 L66 60 Q66 68 58 68 L22 68 Q14 68 14 60 Z" fill="#fdf6e3"/>
+  <path d="M14 22 Q14 14 22 14 L58 14 Q66 14 66 22 L62 22 Q62 16 58 16 L22 16 Q18 16 18 22 Z" fill="#fdba74"/>
+  <path d="M14 60 Q14 68 22 68 L58 68 Q66 68 66 60 L62 60 Q62 66 58 66 L22 66 Q18 66 18 60 Z" fill="#fdba74"/>
+  <g>
+    <rect x="22" y="26" width="6" height="2.5" rx="1" fill="#86efac"/>
+    <rect x="30" y="26" width="18" height="2.5" rx="1" fill="#fdba74"/>
+    <rect x="22" y="33" width="10" height="2.5" rx="1" fill="#86efac"/>
+    <rect x="34" y="33" width="14" height="2.5" rx="1" fill="#c4b5fd"/>
+    <rect x="22" y="40" width="6" height="2.5" rx="1" fill="#86efac"/>
+    <rect x="30" y="40" width="22" height="2.5" rx="1" fill="#fdba74"/>
+    <rect x="22" y="47" width="14" height="2.5" rx="1" fill="#86efac"/>
+    <rect x="38" y="47" width="10" height="2.5" rx="1" fill="#c4b5fd"/>
+    <rect x="22" y="54" width="8" height="2.5" rx="1" fill="#86efac"/>
+    <rect x="32" y="54" width="20" height="2.5" rx="1" fill="#fdba74"/>
+  </g>
+  <path d="M56 30 L57 32.5 L59.5 33 L57 33.5 L56 36 L55 33.5 L52.5 33 L55 32.5 Z" fill="#fcd34d"/>
+</svg>
+<h2>Scientist's Cheat Sheet</h2>
+<pre><code># Setup
+git init                     # build a new lab
+git clone &lt;url&gt;              # take an existing lab home
+
+# Daily rhythm
+git status                   # what's on the bench?
+git add &lt;file&gt;               # gather a fruit
+git commit -m "message"      # record it
+git push                     # share with the central lab
+git pull                     # bring in new fruit
+
+# Branching
+git branch                   # list clones
+git checkout -b &lt;name&gt;       # spawn a new clone
+git merge &lt;name&gt;             # fold a clone back into the supreme
+
+# Rescue
+git log --oneline            # read the notebook
+git revert &lt;commit&gt;          # safely undo a fruit</code></pre>
+<div class="slide-number">14 / 16</div>
+</div>
+
+<div class="slide">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" class="illust illust-icon-share" aria-hidden="true">
+  <g transform="translate(18 22)">
+    <path d="M0 0 C-7 0 -10 8 -9 14 C-8 18 -4 19 0 19 C4 19 8 18 9 14 C10 8 7 0 0 0 Z" fill="#c4b5fd"/>
+    <ellipse cx="-2.2" cy="9" rx="1.1" ry="1.4" fill="#1a1625"/>
+    <ellipse cx="2.2" cy="9" rx="1.1" ry="1.4" fill="#1a1625"/>
+    <path d="M-1.5 13 Q0 14.5 1.5 13" stroke="#1a1625" stroke-width="0.9" stroke-linecap="round" fill="none"/>
+  </g>
+  <path d="M30 32 Q50 30 56 50" stroke="#fcd34d" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="3 4" fill="none" opacity="0.85"/>
+  <g transform="translate(42 32)">
+    <circle r="5" fill="#fdba74"/>
+    <ellipse cx="-1.5" cy="-1.5" rx="1.5" ry="1" fill="#fed7aa" opacity="0.7"/>
+    <path d="M0 -5 Q1 -7 2 -6 Q1 -5 0 -6 Z" fill="#86efac"/>
+  </g>
+  <g transform="translate(56 50)">
+    <ellipse cx="0" cy="16" rx="14" ry="2" fill="#000" opacity="0.2"/>
+    <path d="M0 -8 C-13 -8 -16 7 -14 17 C-12 23 -7 25 0 25 C7 25 12 23 14 17 C16 7 13 -8 0 -8 Z" fill="#86efac"/>
+    <path d="M0 -8 C-9 -8 -14 5 -13 16 C-12 21 -10 23 -6 24 C-13 21 -14 15 -13 8 C-11 1 -6 -6 0 -8 Z" fill="#a7f3c5" opacity="0.6"/>
+    <circle cx="-3.5" cy="10" r="1.8" fill="#f0abfc" opacity="0.55"/>
+    <circle cx="3.5" cy="10" r="1.8" fill="#f0abfc" opacity="0.55"/>
+    <ellipse cx="-3" cy="5" rx="1.6" ry="2.1" fill="#1a1625"/>
+    <ellipse cx="3" cy="5" rx="1.6" ry="2.1" fill="#1a1625"/>
+    <path d="M-2 13 Q0 15 2 13" stroke="#1a1625" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+    <path d="M-5 -14 L-2 -11 L3 -17" stroke="#fcd34d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+</svg>
+<h2>Sharing Your Clone with the Team</h2>
+<p>Once your clone's fruit looks promising, send it to the central lab so the council can review it before it joins the supreme creature.</p>
+<ol>
+  <li><strong>Push your clone</strong> — <code>git push -u origin feature/sweet-fruit</code> uploads your branch and links it to the remote.</li>
+  <li><strong>Open the petition</strong> — <code>gh pr create --fill</code> (or use the GitHub web UI) opens a pull request describing what your fruit does.</li>
+  <li><strong>Respond to feedback</strong> — reviewers leave notes; commit fixes and <code>git push</code> again. The PR updates automatically.</li>
+  <li><strong>Merge when approved</strong> — <code>gh pr merge --squash</code> grafts your fruit onto the supreme creature on the central lab.</li>
+  <li><strong>Tidy the bench</strong> — <code>git checkout main</code>, <code>git pull</code>, then <code>git branch -d feature/sweet-fruit</code> to retire the spent clone.</li>
+</ol>
+<div class="slide-number">15 / 16</div>
+</div>
+
+<div class="slide closing">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="illust illust-hero-cycle" aria-hidden="true">
+  <g transform="translate(100 100)">
+    <g fill="#fcd34d" opacity="0.55">
+      <rect x="-3" y="-95" width="6" height="22" rx="3"/>
+      <rect x="-3" y="-95" width="6" height="22" rx="3" transform="rotate(45)"/>
+      <rect x="-3" y="-95" width="6" height="22" rx="3" transform="rotate(90)"/>
+      <rect x="-3" y="-95" width="6" height="22" rx="3" transform="rotate(135)"/>
+      <rect x="-3" y="-95" width="6" height="22" rx="3" transform="rotate(180)"/>
+      <rect x="-3" y="-95" width="6" height="22" rx="3" transform="rotate(225)"/>
+      <rect x="-3" y="-95" width="6" height="22" rx="3" transform="rotate(270)"/>
+      <rect x="-3" y="-95" width="6" height="22" rx="3" transform="rotate(315)"/>
+    </g>
+    <g fill="#f0abfc" opacity="0.45">
+      <rect x="-2" y="-82" width="4" height="14" rx="2" transform="rotate(22)"/>
+      <rect x="-2" y="-82" width="4" height="14" rx="2" transform="rotate(67)"/>
+      <rect x="-2" y="-82" width="4" height="14" rx="2" transform="rotate(112)"/>
+      <rect x="-2" y="-82" width="4" height="14" rx="2" transform="rotate(157)"/>
+      <rect x="-2" y="-82" width="4" height="14" rx="2" transform="rotate(202)"/>
+      <rect x="-2" y="-82" width="4" height="14" rx="2" transform="rotate(247)"/>
+      <rect x="-2" y="-82" width="4" height="14" rx="2" transform="rotate(292)"/>
+      <rect x="-2" y="-82" width="4" height="14" rx="2" transform="rotate(337)"/>
+    </g>
+    <circle r="68" fill="#fcd34d" opacity="0.15"/>
+  </g>
+  <g transform="translate(100 55)">
+    <circle cx="0" cy="0" r="15" fill="#fdba74"/>
+    <ellipse cx="-4" cy="-4" rx="4" ry="2.5" fill="#fed7aa" opacity="0.7"/>
+    <path d="M0 -15 Q-1 -19 0 -21" stroke="#4a3220" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+    <path d="M0 -20 Q6 -23 9 -18 Q3 -17 0 -19 Z" fill="#86efac"/>
+    <path d="M16 -8 Q14 -12 11 -10 Q9 -8 12 -4 Q14 -2 16 -4 Q19 -8 17 -10 Q15 -12 13 -10" fill="#f0abfc" opacity="0.85"/>
+  </g>
+  <ellipse cx="100" cy="175" rx="40" ry="5" fill="#000" opacity="0.2"/>
+  <path d="M100 100 C65 100 58 135 63 158 C66 172 80 178 100 178 C120 178 134 172 137 158 C142 135 135 100 100 100 Z" fill="#86efac"/>
+  <path d="M100 100 C72 100 60 130 62 152 C64 165 72 172 86 175 C73 170 68 155 70 138 C73 116 86 104 100 100 Z" fill="#a7f3c5" opacity="0.6"/>
+  <ellipse cx="84" cy="122" rx="9" ry="13" fill="#d1fadf" opacity="0.55"/>
+  <circle cx="79" cy="148" r="5.5" fill="#f0abfc" opacity="0.55"/>
+  <circle cx="121" cy="148" r="5.5" fill="#f0abfc" opacity="0.55"/>
+  <path d="M83 138 Q88 132 93 138" stroke="#1a1625" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+  <path d="M107 138 Q112 132 117 138" stroke="#1a1625" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+  <path d="M93 153 Q100 161 107 153" stroke="#1a1625" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+  <path d="M138 130 Q155 115 150 95" stroke="#86efac" stroke-width="8" stroke-linecap="round" fill="none"/>
+  <circle cx="150" cy="93" r="7" fill="#86efac"/>
+  <path d="M65 138 Q55 145 58 158" stroke="#86efac" stroke-width="7" stroke-linecap="round" fill="none"/>
+</svg>
+<h2>The Supreme Cycle Continues</h2>
+<p>The supreme creature lives on through the careful work of many scientists, each tending their own clone, each fruit recorded in the notebook. Git is just the protocol for that ritual — the shared language that lets the lab keep growing without losing its history. Solo or with a team, the rhythm is the same: clone, grow, record, merge.</p>
+<p><em>Now go grow something.</em></p>
+<div class="slide-number">16 / 16</div>
+</div>
+
+<script>
+document.addEventListener('keydown', (e) => {
+  const slides = document.querySelectorAll('.slide');
+  const current = Math.round(window.scrollY / window.innerHeight);
+  if ((e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') && current < slides.length - 1) {
+    e.preventDefault();
+    slides[current + 1].scrollIntoView({ behavior: 'smooth' });
+  } else if ((e.key === 'ArrowUp' || e.key === 'ArrowLeft') && current > 0) {
+    e.preventDefault();
+    slides[current - 1].scrollIntoView({ behavior: 'smooth' });
+  }
+});
+
+(function () {
+  function init() {
+    const slides = document.querySelectorAll('.slide');
+    if (!slides.length) return;
+    if (slides[0]) slides[0].classList.add('in-view');
+    if (!('IntersectionObserver' in window)) {
+      slides.forEach(s => s.classList.add('in-view'));
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+          entry.target.classList.add('in-view');
+        } else if (entry.intersectionRatio < 0.1) {
+          entry.target.classList.remove('in-view');
+        }
+      });
+    }, { threshold: [0, 0.1, 0.5, 1] });
+    slides.forEach((slide) => observer.observe(slide));
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>

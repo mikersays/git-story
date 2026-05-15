@@ -1,0 +1,5 @@
+# Playwright MCP cache (created by browser-driving subagents)
+.playwright-mcp/
+
+# Slide screenshots captured during assessor runs
+slide*.png
