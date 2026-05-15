@@ -830,7 +830,7 @@ git blame &lt;file&gt;              # who grew this fruit?</code></pre>
 <pre><code>git revert &lt;commit&gt;        # safe: grows a new fruit that undoes the bad one
 git reset --hard &lt;commit&gt;  # dangerous: erases fruit from history</code></pre>
 <ul>
-  <li>Prefer <code>git revert</code> on any branch shared with other scientists.</li>
+  <li>Prefer <code>git revert</code> on any clone shared with other scientists.</li>
   <li>Reserve <code>git reset --hard</code> for your own local clone, before anyone has seen the fruit.</li>
   <li>Rewriting shared history corrupts every clone downstream — the lab will not forgive it.</li>
 </ul>
@@ -864,7 +864,7 @@ git reset --hard &lt;commit&gt;  # dangerous: erases fruit from history</code></
   </g>
 </svg>
 <h2>The Team Workflow</h2>
-<p>Labs are scattered across the world, each with its own scientists and clones. The central lab — <code>origin</code> — is the shared sanctuary where everyone syncs their findings so no discovery is lost.</p>
+<p>Until now we've worked in one lab. In a team, every scientist keeps their own — a complete copy of the creature on their own bench. The labs are scattered across the world, but they all sync through one central lab called <code>origin</code>, the shared sanctuary where no discovery is lost.</p>
 <pre><code>git remote add origin &lt;url&gt;     # link to the central lab
 git fetch origin                # see what's new (don't apply)
 git pull origin main            # see what's new and apply
@@ -946,7 +946,8 @@ git checkout -b &lt;name&gt;       # spawn a new clone
 git merge &lt;name&gt;             # fold a clone back into the supreme
 
 # Rescue
-git log --oneline            # read the notebook
+git log --oneline            # read the lab notebook
+git reflog                   # your private notebook — find lost fruit
 git revert &lt;commit&gt;          # safely undo a fruit</code></pre>
 <div class="slide-number">14 / 16</div>
 </div>
