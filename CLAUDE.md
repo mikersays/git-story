@@ -51,16 +51,14 @@ Two layers:
 
 ### Responsive breakpoints
 
-Four layout regimes in order:
-
 | Width | Behavior |
 |---|---|
-| `≥ 1400px` | Content capped at 1200px centered column. Slide padding becomes `max(12vw, (100vw - 1200px) / 2)`. Icon `right` and slide-number `right` use the **same formula** so they sit at the content's right edge instead of floating in the wide gutter. |
-| Default desktop | Padding `8vh 12vw`. Icon absolutely positioned `top: 2.5rem; right: 2.75rem`. |
-| `≤ 768px` | Slide padding tightens, content allowed to scroll inside the slide (`overflow-y: auto`), icons switch from absolute corner to inline-above-heading. `100dvh` fallback so iOS Safari URL bar doesn't crop. |
+| `≥ 1400px` | Content capped at 1200px centered column. Slide padding becomes `max(12vw, (100vw - 1200px) / 2)`. Slide-number `right` uses the same formula so the pill stays at the content's right edge. |
+| Default desktop | Padding `8vh 12vw`. |
+| `≤ 768px` | Slide padding tightens, content allowed to scroll inside the slide (`overflow-y: auto`). `100dvh` fallback so iOS Safari URL bar doesn't crop. |
 | `max-height: 480px and landscape` | Switches font sizing from `vw`-scaled to `vh`-scaled. |
 
-**Critical invariant**: on wide screens, the `.illust[class*="illust-icon-"]` `right` value and the `.slide` `padding-right` value must use the identical `max(12vw, calc(...))` formula. If they diverge, icons drift outside the capped content column in the 1400–1580px range.
+Icons live in normal document flow directly above each slide's heading at every viewport (~84px on desktop, ~70px on mobile, ~60px on small phones). Heroes on the title and closing slides are centered above their heading. Only the slide-number pill is absolutely positioned (bottom-right corner of the content column).
 
 ### SVG illustrations
 

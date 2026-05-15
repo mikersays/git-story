@@ -242,14 +242,11 @@
   }
 
   .illust[class*="illust-icon-"] {
-    position: absolute;
-    top: 2.5rem;
-    right: 2.75rem;
-    width: 90px;
-    height: 90px;
+    width: 84px;
+    height: 84px;
+    margin: 0 0 1rem;
     opacity: 0.97;
     transition: transform 0.4s ease;
-    z-index: 1;
   }
 
   .illust-hero-supreme,
@@ -355,20 +352,8 @@
       padding-right: max(12vw, calc((100vw - 1200px) / 2));
     }
 
-    /* Anchor icon's right edge to the content's right edge so it
-       sits inside the capped column instead of floating in the gutter. */
-    .illust[class*="illust-icon-"] {
-      right: max(12vw, calc((100vw - 1200px) / 2));
-    }
-
     .slide-number {
       right: max(12vw, calc((100vw - 1200px) / 2));
-    }
-
-    /* Reserve room on the right of the heading so long titles don't
-       run under the icon now that it lives inside the content area. */
-    .slide:not(.title):not(.closing) h2 {
-      padding-right: 110px;
     }
   }
 
