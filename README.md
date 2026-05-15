@@ -61,7 +61,7 @@ A direct pass added three responsive breakpoints (`≤ 768px`, `≤ 480px`, land
 The original palette was cold slate. After a "make this feel friendly" prompt, three subagents were spawned in parallel — coordinated by pre-defining a **shared palette** (mint creature, peach fruit, lavender clones, coral rotten, honey sparkles, rose warmth) in every agent's prompt. The shared palette was the contract that let their outputs compose without conflict:
 
 - **Friendly aesthetic director** — produced the warm-dark "storybook lab" palette, rounded typography, and a slow sunset-shimmer gradient on the title.
-- **SVG illustrator** — produced 15 inline SVG illustrations (two hero illustrations + 13 corner icons): a mint blob creature with rosy cheeks, a single fruit, a stack of clones, a beaker with a creature inside, two creatures merging with a heart, colliding fruits with honey sparks, an open notebook, a rotten fruit with X-eyes, a clipboard, a parchment scroll.
+- **SVG illustrator** — produced 15 inline SVG illustrations (two hero illustrations + 13 slide icons): a mint blob creature with rosy cheeks, a single fruit, a stack of clones, a beaker with a creature inside, two creatures merging with a heart, colliding fruits with honey sparks, an open notebook, a rotten fruit with X-eyes, a clipboard, a parchment scroll.
 - **Motion designer** — produced CSS keyframes (`bob`, `pulse-glow`, `sway`, `shimmer`, `fade-up`), an IntersectionObserver that adds `in-view` to each slide as it scrolls into view, and a `prefers-reduced-motion` override.
 
 Integration caught a subtle bug: CSS custom properties don't work in SVG presentation attributes, so the illustrator's `fill="var(--mint)"` had to be converted to hardcoded `#86efac` everywhere. This is documented in `CLAUDE.md` so the next session doesn't rediscover it.
@@ -73,7 +73,8 @@ After the creative round, smaller adjustments happened directly:
 - Keyboard hint on the title slide (`← →` pill keys saying "to navigate"), hidden on mobile
 - New slide (15) covering the practical PR workflow — `git push -u`, `gh pr create --fill`, responding to feedback by pushing more commits, `gh pr merge --squash`, then deleting the merged branch
 - Content cap at 1200px on wide screens (`max(12vw, (100vw - 1200px) / 2)` padding)
-- A bug fix: icons were "floating outside" the capped content area in the 1400–1580px viewport range because the icon's `right` formula didn't match the slide's `padding-right` formula — fixing it required anchoring both to the same `max(...)` expression
+- A bug fix: icons were "floating outside" the capped content area in the 1400–1580px viewport range because the icon's `right` formula didn't match the slide's `padding-right` formula — fixed by anchoring both to the same `max(...)` expression
+- Moved icons out of the top-right corner entirely — they now sit in normal document flow above each slide's heading at every viewport. A brief detour through centering was reverted in favor of left-aligned, which reads more like a topic avatar above the title
 - Moved the deck to `docs/index.html` for GitHub Pages
 - Added `CLAUDE.md` for future Claude Code sessions, and this `README.md`
 

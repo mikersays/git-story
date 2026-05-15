@@ -58,7 +58,7 @@ Two layers:
 | `≤ 768px` | Slide padding tightens, content allowed to scroll inside the slide (`overflow-y: auto`). `100dvh` fallback so iOS Safari URL bar doesn't crop. |
 | `max-height: 480px and landscape` | Switches font sizing from `vw`-scaled to `vh`-scaled. |
 
-Icons live in normal document flow directly above each slide's heading at every viewport (~84px on desktop, ~70px on mobile, ~60px on small phones). Heroes on the title and closing slides are centered above their heading. Only the slide-number pill is absolutely positioned (bottom-right corner of the content column).
+Icons live in normal document flow directly above each slide's heading at every viewport (~84px on desktop, ~70px on mobile, ~60px on small phones), **left-aligned** with the heading and prose (the user explicitly preferred this over centered). Heroes on the title and closing slides are centered above their heading. Only the slide-number pill is absolutely positioned (bottom-right corner of the content column).
 
 ### SVG illustrations
 
